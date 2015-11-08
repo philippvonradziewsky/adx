@@ -67,7 +67,7 @@ struct derivative<plus<Lhs,Rhs>, Var> {
 
   template<class... Args>
   result_type operator() (Args const&... args) {
-    return result_type(0.); // TODO
+    return derivative<Lhs,Var>()(args...) + derivative<Rhs,Var>()(args...);
   }
 };
 
