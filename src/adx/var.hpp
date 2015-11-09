@@ -23,6 +23,7 @@
 #include <adx/detail/common_type.hpp>
 #include <adx/detail/nullary_expression.hpp>
 #include <adx/detail/binary_expression.hpp>
+#include <adx/detail/derivative_traits.hpp>
 
 #include <cstddef>
 #include <tuple>
@@ -70,7 +71,9 @@ struct common_type<var<T>, Other>
 
 template<typename T>
 struct derivative<var<T>, var<T>> {
-  using result_type = typename var<T>::result_type;
+  using result_type = typename derivative_traits<
+                        typename var<T>::result_type
+                      >::dual_type;
 
   template<class... Args>
   result_type operator() (Args const&... args) {
@@ -80,7 +83,9 @@ struct derivative<var<T>, var<T>> {
 
 template<typename T1, typename T2>
 struct derivative<var<T1>, var<T2>> {
-  using result_type = typename var<T2>::result_type;
+  using result_type = typename derivative_traits<
+                        typename var<T2>::result_type
+                      >::dual_type;
 
   template<class... Args>
   result_type operator() (Args const&... args) {

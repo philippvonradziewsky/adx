@@ -15,33 +15,31 @@
  * along with adx.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADX_COVECTOR_HPP_
-#define ADX_COVECTOR_HPP_
-
-#include <adx/tensor.hpp>
-#include <adx/valence.hpp>
-
+#include <adx/covector.hpp>
+#include <adx/derivative.hpp>
+#include <adx/multiply.hpp>
 #include <adx/vector.hpp>
 
-#include <iterator>
-#include <numeric>
+#include <type_traits>
 
-namespace adx {
+using vec2   = adx::vector<float,2>;
+using covec2 = adx::covector<float,2>;
 
-template<typename T, std::size_t Extent>
-class covector
-  : public tensor<T, typename make_valence<>::covariant<Extent>::type> {
+struct my_function {
+  struct p { vec2   value; };
+  struct q { covec2 value; };
 
-public:
-  T operator* (vector<T,Extent> const& other) const {
-    return std::inner_product(
-      std::begin(this->storage_), std::end(this->storage_),
-      std::begin(other.storage_), T(0)
-    );
-  }
-
+  using function   = adx::multiply<adx::var<q>,adx::var<p>>;
+  using derivative = adx::derivative<function,adx::var<p>>;
 };
 
-}
+int main() {
+  using function   = my_function::function;
+  using derivative = my_function::derivative;
 
-#endif /* end of include guard: ADX_COVECTOR_HPP_ */
+  static_assert(std::is_same<function::result_type, float>::value,
+    "Test failed");
+
+  static_assert(std::is_same<derivative::result_type, covec2>::value,
+    "Test failed");
+}
