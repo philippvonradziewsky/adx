@@ -19,9 +19,16 @@
 #define ADX_VECTOR_HPP_
 
 #include <adx/covector_forward.hpp>
+#include <adx/derivative_forward.hpp>
+#include <adx/eye.hpp>
 #include <adx/tensor.hpp>
+#include <adx/var_forward.hpp>
+#include <adx/zero.hpp>
 
 #include <adx/detail/derivative_traits.hpp>
+
+#include <initializer_list>
+#include <memory>
 
 namespace adx {
 
@@ -29,11 +36,37 @@ template<typename T, std::size_t Extent>
 class vector
   : public tensor<T, typename make_valence<>::contravariant<Extent>::type> {
 
+public:
+  vector(std::initializer_list<T> init) {
+    std::uninitialized_copy(
+      std::begin(init), std::end(init), std::begin(this->storage_)
+    );
+  }
+
 };
 
 template<typename T, std::size_t Extent>
 struct derivative_traits<vector<T,Extent>> {
-  using dual_type = covector<T,Extent>;
+
+  using eye_type  = eye<
+                      T,
+                      typename make_valence<
+                      >::template contravariant<
+                        Extent
+                      >::template covariant<
+                        Extent
+                      >::type
+                    >;
+
+  using zero_type = zero<
+                      T,
+                      typename make_valence<
+                      >::template contravariant<
+                        Extent
+                      >::template covariant<
+                        Extent
+                      >::type
+                    >;
 };
 
 }

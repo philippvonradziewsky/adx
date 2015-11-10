@@ -18,12 +18,13 @@
 #ifndef ADX_DETAIL_ARRAY_HPP_
 #define ADX_DETAIL_ARRAY_HPP_
 
+#include <adx/detail/array_forward.hpp>
 #include <adx/detail/extent.hpp>
 
 namespace adx {
 namespace detail {
 
-template<typename T, std::size_t...Extents >
+template<typename T, std::size_t...Extents>
 class array {
 public:
   using extent_type = extent<Extents...>;
@@ -31,7 +32,15 @@ public:
 
 protected:
   T storage_[extent_type::size()];
+
+public:
+  friend T const* data<>(array<T,Extents...> const& arr);
 };
+
+template<typename T, std::size_t...Extents>
+T const* data(array<T,Extents...> const& arr) {
+  return arr.storage_;
+}
 
 }
 }

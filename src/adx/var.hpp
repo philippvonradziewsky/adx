@@ -73,23 +73,23 @@ template<typename T>
 struct derivative<var<T>, var<T>> {
   using result_type = typename derivative_traits<
                         typename var<T>::result_type
-                      >::dual_type;
+                      >::eye_type;
 
   template<class... Args>
   result_type operator() (Args const&... args) {
-    return result_type(1.);
+    return result_type();
   }
 };
 
 template<typename T1, typename T2>
 struct derivative<var<T1>, var<T2>> {
   using result_type = typename derivative_traits<
-                        typename var<T2>::result_type
-                      >::dual_type;
+                        typename var<T1>::result_type
+                      >::zero_type;
 
   template<class... Args>
   result_type operator() (Args const&... args) {
-    return result_type(0.);
+    return result_type();
   }
 };
 

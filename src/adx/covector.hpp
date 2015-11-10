@@ -20,6 +20,8 @@
 
 #include <adx/tensor.hpp>
 #include <adx/valence.hpp>
+#include <adx/derivative_forward.hpp>
+#include <adx/zero.hpp>
 
 #include <adx/vector.hpp>
 
@@ -33,15 +35,56 @@ class covector
   : public tensor<T, typename make_valence<>::covariant<Extent>::type> {
 
 public:
+  covector(std::initializer_list<T> init) {
+    std::uninitialized_copy(
+      std::begin(init), std::end(init), std::begin(this->storage_)
+    );
+  }
+
+public:
   T operator* (vector<T,Extent> const& other) const {
     return std::inner_product(
       std::begin(this->storage_), std::end(this->storage_),
-      std::begin(other.storage_), T(0)
+      detail::data(other), T(0)
     );
+  }
+
+  covector operator* (T val) const {
+    covector result = *this;
+
+    for (T& t : this->storage_)
+      t *= val;
   }
 
 };
 
+template<typename T, std::size_t Extent>
+struct derivative_traits<covector<T,Extent>> {
+
+  using eye_type  = eye<
+                      T,
+                      typename make_valence<
+                      >::template contravariant<
+                        Extent
+                      >::template covariant<
+                        Extent
+                      >::type
+                    >;
+
+  using zero_type = zero<
+                      T,
+                      typename make_valence<
+                      >::template contravariant<
+                        Extent
+                      >::template covariant<
+                        Extent
+                      >::type
+                    >;
+
+};
+
 }
+
+#include <adx/operators/covector_operators.hpp>
 
 #endif /* end of include guard: ADX_COVECTOR_HPP_ */

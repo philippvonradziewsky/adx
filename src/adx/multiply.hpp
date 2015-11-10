@@ -47,13 +47,23 @@ struct multiply : public detail::binary_expression {
 template<typename Lhs, typename Rhs, typename Var>
 struct derivative<multiply<Lhs,Rhs>, Var> {
 
-  using result_type = typename derivative_traits<
-                        typename Var::result_type
-                      >::dual_type;
+  using result_type = decltype(
+                        std::declval<
+                          typename derivative<Lhs,Var>::result_type
+                        >() * std::declval<
+                          typename Rhs::result_type
+                        >() + std::declval<
+                          typename Lhs::result_type
+                        >() *
+                          std::declval<
+                          typename derivative<Rhs,Var>::result_type
+                        >()
+                      );
 
   template<class... Args>
   result_type operator() (Args const&... args) {
-    return result_type(); // TODO
+    return derivative<Lhs,Var>()(args...) * Rhs()(args...) +
+      Lhs()(args...) * derivative<Rhs,Var>()(args...);
   }
 };
 

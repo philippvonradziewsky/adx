@@ -15,32 +15,14 @@
  * along with adx.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADX_DERIVATIVE_TRAITS_HPP_
-#define ADX_DERIVATIVE_TRAITS_HPP_
+#ifndef ADX_VAR_FORWARD_HPP_
+#define ADX_VAR_FORWARD_HPP_
 
 namespace adx {
 
 template<typename T>
-struct derivative_traits;
-
-template<>
-struct derivative_traits<float> {
-  struct eye_type { operator float() const { return 1.f; } };
-  struct zero_type { operator float() const { return 0.f; } };
-};
-
-template<>
-struct derivative_traits<double> {
-  struct eye_type { operator double() const { return 1.; } };
-  struct zero_type { operator double() const { return 0.; } };
-};
-
-template<>
-struct derivative_traits<long double> {
-  struct eye_type { operator long double() const { return 1.l; } };
-  struct zero_type { operator long double() const { return 0.l; } };
-};
+struct var;
 
 }
 
-#endif /* end of include guard: ADX_DERIVATIVE_TRAITS_HPP_ */
+#endif /* end of include guard: ADX_VAR_FORWARD_HPP_ */
