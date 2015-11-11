@@ -16,8 +16,3 @@ if (adx_BUILD_TESTING)
   enable_testing()
   add_subdirectory(test)
 endif()
-
-add_executable(test01 test/main.cpp)
-set_target_properties(test01 PROPERTIES
-  CXX_STANDARD 14)
-target_link_libraries(test01 adx)
