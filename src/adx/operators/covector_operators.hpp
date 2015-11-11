@@ -25,8 +25,26 @@
 namespace adx {
 
 template<typename T, std::size_t Extent>
+covector<T,Extent> operator* (covector<T,Extent> lhs, T rhs){
+  covector<T,Extent> result = lhs;
+
+  for (T& t : detail::data(result.storage_))
+    t *= rhs;
+
+  return result;
+}
+
+template<typename T, std::size_t Extent>
 covector<T,Extent> operator* (T lhs, covector<T,Extent> rhs) {
   return rhs * lhs;
+}
+
+template<typename T, std::size_t Extent>
+T operator* (covector<T,Extent> lhs, vector<T,Extent> rhs) {
+  return std::inner_product(
+    std::begin(detail::data(lhs)), std::end(detail::data(lhs)),
+    detail::data(rhs), T(0)
+  );
 }
 
 template<typename T, std::size_t Extent>

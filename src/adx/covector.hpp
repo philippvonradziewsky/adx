@@ -40,22 +40,6 @@ public:
       std::begin(init), std::end(init), std::begin(this->storage_)
     );
   }
-
-public:
-  T operator* (vector<T,Extent> const& other) const {
-    return std::inner_product(
-      std::begin(this->storage_), std::end(this->storage_),
-      detail::data(other), T(0)
-    );
-  }
-
-  covector operator* (T val) const {
-    covector result = *this;
-
-    for (T& t : this->storage_)
-      t *= val;
-  }
-
 };
 
 template<typename T, std::size_t Extent>
