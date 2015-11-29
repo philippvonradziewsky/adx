@@ -35,10 +35,16 @@ protected:
 
 public:
   friend T const (&data<>(array<T,Extents...> const& arr))[extent<Extents...>::size()];
+  friend T       (&data<>(array<T,Extents...>      & arr))[extent<Extents...>::size()];
 };
 
 template<typename T, std::size_t...Extents>
 T const (&data(array<T,Extents...> const& arr))[extent<Extents...>::size()] {
+  return arr.storage_;
+}
+
+template<typename T, std::size_t...Extents>
+T (&data(array<T,Extents...> & arr))[extent<Extents...>::size()] {
   return arr.storage_;
 }
 
