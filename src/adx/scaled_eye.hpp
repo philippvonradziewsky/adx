@@ -15,11 +15,15 @@
  * along with adx.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADX_EYE_HPP_
-#define ADX_EYE_HPP_
+#ifndef ADX_SCALED_EYE_HPP_
+#define ADX_SCALED_EYE_HPP_
 
+#include <adx/scaled_eye_forward.hpp>
+
+#include <adx/eye.hpp>
 #include <adx/valence.hpp>
 
+#include <adx/detail/derivative_traits_forward.hpp>
 #include <adx/detail/always_false.hpp>
 
 #include <cstddef>
@@ -27,7 +31,7 @@
 namespace adx {
 
 template<typename T, class Valence>
-struct eye {
+class scaled_eye {
   static_assert(detail::always_false<Valence>::value,
     "2nd template argument must be valence type");
 };
@@ -36,7 +40,7 @@ template<
   typename T,
   std::size_t... ContravarientExtents,
   std::size_t... CovariantExtents>
-class eye<
+class scaled_eye<
   T,
   valence<
     detail::extent<ContravarientExtents...>,
@@ -48,19 +52,52 @@ public:
                          detail::extent<ContravarientExtents...>,
                          detail::extent<CovariantExtents...>
                        >;
+
+public:
+  scaled_eye(T val) : storage_(val) {
+  }
+
+private:
+  T storage_;
+
+public:
+  friend T const& detail::data<>(scaled_eye<T,valence_type> const& val);
+};
+
+template<typename T, class Valence>
+struct derivative_traits<scaled_eye<T,Valence>> {
+
+  using valence_type = Valence;
+
+  using eye_type  = eye<T,valence_type>;
+
+  template<typename T2>
+  using zero_type = zero<
+                      T,
+                      valence<
+                        typename valence_type::contravariant,
+                        detail::concat_extent_t<
+                          typename valence_type::covariant,
+                          typename derivative_traits<
+                            T2
+                          >::valence_type::contravariant
+                        >
+                      >
+                    >;
+
 };
 
 namespace detail {
 
-template<typename T>
-T data(eye<T,make_valence<>::type>) {
-  return T(1.0);
+template<typename T, class Valence>
+T const& data(scaled_eye<T,Valence> const& val) {
+  return val.storage_;
 }
 
 }
 
 }
 
-#include <adx/operators/eye_operators.hpp>
+#include <adx/operators/scaled_eye_operators.hpp>
 
-#endif /* end of include guard: ADX_EYE_HPP_ */
+#endif /* end of include guard: ADX_SCALED_EYE_HPP_ */

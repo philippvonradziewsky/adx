@@ -15,36 +15,14 @@
  * along with adx.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADX_ZERO_HPP_
-#define ADX_ZERO_HPP_
-
-#include <adx/detail/always_false.hpp>
-
-#include <cstddef>
+#ifndef ADX_DERIVATIVE_TRAITS_FORWARD_HPP_
+#define ADX_DERIVATIVE_TRAITS_FORWARD_HPP_
 
 namespace adx {
 
-template<typename T, class Valence>
-struct zero {
-  static_assert(detail::always_false<Valence>::value,
-    "2nd template argument must be valence type");
-};
-
-template<
-  typename T,
-  std::size_t... ContravarientExtents,
-  std::size_t... CovariantExtents>
-class zero<
-  T,
-  valence<
-    detail::extent<ContravarientExtents...>,
-    detail::extent<CovariantExtents...>
-  >
-> {
-};
+template<typename T>
+struct derivative_traits;
 
 }
 
-#include <adx/operators/zero_operators.hpp>
-
-#endif /* end of include guard: ADX_ZERO_HPP_ */
+#endif /* end of include guard: ADX_DERIVATIVE_TRAITS_FORWARD_HPP_ */

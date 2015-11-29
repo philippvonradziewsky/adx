@@ -18,27 +18,35 @@
 #ifndef ADX_DERIVATIVE_TRAITS_HPP_
 #define ADX_DERIVATIVE_TRAITS_HPP_
 
-namespace adx {
+#include <adx/detail/derivative_traits_forward.hpp>
 
-template<typename T>
-struct derivative_traits;
+#include <adx/eye.hpp>
+#include <adx/zero.hpp>
+
+namespace adx {
 
 template<>
 struct derivative_traits<float> {
-  struct eye_type { operator float() const { return 1.f; } };
-  struct zero_type { operator float() const { return 0.f; } };
-};
+  struct eye_type : public eye<
+                      float,
+                      typename make_valence<>::type
+                    > {
+    operator float() const { return 1.f; }
+  };
 
-template<>
-struct derivative_traits<double> {
-  struct eye_type { operator double() const { return 1.; } };
-  struct zero_type { operator double() const { return 0.; } };
-};
+  using valence_type = make_valence<>::type;
 
-template<>
-struct derivative_traits<long double> {
-  struct eye_type { operator long double() const { return 1.l; } };
-  struct zero_type { operator long double() const { return 0.l; } };
+  template<typename T2>
+  using zero_type = zero<
+                      float,
+                      valence<
+                        typename derivative_traits<T2>::valence_type::contravariant,
+                        detail::concat_extent_t<
+                          typename derivative_traits<T2>::valence_type::contravariant,
+                          typename derivative_traits<T2>::valence_type::contravariant
+                        >
+                      >
+                    >;
 };
 
 }

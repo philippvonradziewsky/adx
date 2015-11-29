@@ -19,7 +19,9 @@
 #include <isclose.hpp>
 
 #include <adx/plus.hpp>
+#include <adx/multiply.hpp>
 #include <adx/derivative.hpp>
+#include <adx/detail/is_instantiation_of.hpp>
 
 struct my_function {
   struct x { float value; };
@@ -77,12 +79,75 @@ unit_test_result_t scalar_test_02(char **result_message) {
     return TEST_FAILED;
   }
 
-  result = dfdx( x{1.f}, y{2.f} );
+  auto dresult = dfdx( x{1.f}, y{2.f} );
 
-  if ( !adx::isclose(result,1.f) ) {
+  if (!adx::isclose(adx::detail::data(dresult),1.f) ) {
     UNIT_TEST_CREATE_RESULT_MESSAGE(
       result_message, "An error occurred in %s:%d, %.2f != %.2f", __FILE__,
       __LINE__, result, 1.f);
+    return TEST_FAILED;
+  }
+
+  return TEST_PASSED;
+}
+
+unit_test_result_t scalar_test_03(char **result_message) {
+  using namespace adx;
+  struct x { float value; };
+  struct y { float value; };
+
+  using function   = plus<plus<var<x>,var<x>>,var<y>>;
+  using derivative = derivative<function, var<x>>;
+
+  function   f;
+  derivative dfdx;
+
+  float result = f( x{1.f}, y{2.f} );
+
+  if ( !isclose(result,4.f) ) {
+    UNIT_TEST_CREATE_RESULT_MESSAGE(
+      result_message, "An error occurred in %s:%d, %.2f != %.2f", __FILE__,
+      __LINE__, result, 4.f);
+    return TEST_FAILED;
+  }
+
+  result = dfdx( x{1.f}, y{2.f} );
+
+  if ( !isclose(result,2.f) ) {
+    UNIT_TEST_CREATE_RESULT_MESSAGE(
+      result_message, "An error occurred in %s:%d, %.2f != %.2f", __FILE__,
+      __LINE__, result, 2.f);
+    return TEST_FAILED;
+  }
+
+  return TEST_PASSED;
+}
+
+unit_test_result_t scalar_test_04(char **result_message) {
+  using namespace adx;
+  struct x { float value; };
+
+  using function   = multiply<var<x>,var<x>>;
+  using derivative = derivative<function, var<x>>;
+
+  function   f;
+  derivative dfdx;
+
+  float result = f( x{3.f} );
+
+  if ( !isclose(result,9.f) ) {
+    UNIT_TEST_CREATE_RESULT_MESSAGE(
+      result_message, "An error occurred in %s:%d, %.2f != %.2f", __FILE__,
+      __LINE__, result, 9.f);
+    return TEST_FAILED;
+  }
+
+  result = dfdx( x{3.f} );
+
+  if ( !isclose(result,6.f) ) {
+    UNIT_TEST_CREATE_RESULT_MESSAGE(
+      result_message, "An error occurred in %s:%d, %.2f != %.2f", __FILE__,
+      __LINE__, result, 6.f);
     return TEST_FAILED;
   }
 

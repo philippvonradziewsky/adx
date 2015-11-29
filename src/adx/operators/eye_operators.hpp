@@ -15,36 +15,25 @@
  * along with adx.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADX_ZERO_HPP_
-#define ADX_ZERO_HPP_
+#ifndef ADX_OPERATOR_EYE_OPERATORS_HPP_
+#define ADX_OPERATOR_EYE_OPERATORS_HPP_
 
-#include <adx/detail/always_false.hpp>
-
-#include <cstddef>
+#include <adx/valence.hpp>
+#include <adx/eye.hpp>
+#include <adx/zero.hpp>
 
 namespace adx {
 
 template<typename T, class Valence>
-struct zero {
-  static_assert(detail::always_false<Valence>::value,
-    "2nd template argument must be valence type");
-};
+eye<T,Valence> operator+ (eye<T,Valence>, zero<T,Valence>) {
+  return {};
+}
 
-template<
-  typename T,
-  std::size_t... ContravarientExtents,
-  std::size_t... CovariantExtents>
-class zero<
-  T,
-  valence<
-    detail::extent<ContravarientExtents...>,
-    detail::extent<CovariantExtents...>
-  >
-> {
-};
+template<typename T>
+T operator* (eye<T,make_valence<>::type>, T rhs) {
+  return rhs;
+}
 
 }
 
-#include <adx/operators/zero_operators.hpp>
-
-#endif /* end of include guard: ADX_ZERO_HPP_ */
+#endif /* end of include guard: ADX_OPERATOR_EYE_OPERATORS_HPP_ */

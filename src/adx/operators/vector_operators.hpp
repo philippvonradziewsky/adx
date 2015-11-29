@@ -15,36 +15,24 @@
  * along with adx.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADX_ZERO_HPP_
-#define ADX_ZERO_HPP_
+#ifndef ADX_OPERATOR_VECTOR_OPERATORS_HPP_
+#define ADX_OPERATOR_VECTOR_OPERATORS_HPP_
 
-#include <adx/detail/always_false.hpp>
-
-#include <cstddef>
+#include <adx/vector.hpp>
+#include <adx/derivative.hpp>
 
 namespace adx {
 
-template<typename T, class Valence>
-struct zero {
-  static_assert(detail::always_false<Valence>::value,
-    "2nd template argument must be valence type");
-};
+template<typename T, std::size_t Extent>
+vector<T,Extent> operator* (T lhs, vector<T,Extent> rhs) {
+  vector<T,Extent> result = rhs;
 
-template<
-  typename T,
-  std::size_t... ContravarientExtents,
-  std::size_t... CovariantExtents>
-class zero<
-  T,
-  valence<
-    detail::extent<ContravarientExtents...>,
-    detail::extent<CovariantExtents...>
-  >
-> {
-};
+  for (T& t : detail::data(result))
+    t = lhs * t;
+
+  return result;
+}
 
 }
 
-#include <adx/operators/zero_operators.hpp>
-
-#endif /* end of include guard: ADX_ZERO_HPP_ */
+#endif /* end of include guard: ADX_OPERATOR_VECTOR_OPERATORS_HPP_ */

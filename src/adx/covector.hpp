@@ -55,14 +55,20 @@ struct derivative_traits<covector<T,Extent>> {
                       >::type
                     >;
 
+  using valence_type = typename covector<T,Extent>::valence_type;
+
+  template<typename T2>
   using zero_type = zero<
                       T,
-                      typename make_valence<
-                      >::template contravariant<
-                        Extent
-                      >::template covariant<
-                        Extent
-                      >::type
+                      valence<
+                        typename valence_type::contravariant,
+                        detail::concat_extent_t<
+                          typename valence_type::covariant,
+                          typename derivative_traits<
+                            T2
+                          >::valence_type::contravariant
+                        >
+                      >
                     >;
 
 };

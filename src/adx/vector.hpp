@@ -58,6 +58,8 @@ struct derivative_traits<vector<T,Extent>> {
                       >::type
                     >;
 
+  using valence_type = typename vector<T,Extent>::valence_type;
+
   using zero_type = zero<
                       T,
                       typename make_valence<
@@ -70,5 +72,7 @@ struct derivative_traits<vector<T,Extent>> {
 };
 
 }
+
+#include <adx/operators/vector_operators.hpp>
 
 #endif /* end of include guard: ADX_VECTOR_HPP_ */

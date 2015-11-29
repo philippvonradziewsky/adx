@@ -15,36 +15,28 @@
  * along with adx.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADX_ZERO_HPP_
-#define ADX_ZERO_HPP_
+#include <adx/vector.hpp>
+#include <adx/multiply.hpp>
+#include <adx/derivative.hpp>
+#include <adx/tensor.hpp>
 
-#include <adx/detail/always_false.hpp>
+#include <type_traits>
 
-#include <cstddef>
+using vec2   = adx::vector<float,2>;
 
-namespace adx {
+int main() {
+  using namespace adx;
+  struct v { vec2 value; };
+  struct a { float value; };
 
-template<typename T, class Valence>
-struct zero {
-  static_assert(detail::always_false<Valence>::value,
-    "2nd template argument must be valence type");
-};
+  using function   = multiply<var<a>,var<v>>;
+  using derivative = derivative<function,var<v>>;
 
-template<
-  typename T,
-  std::size_t... ContravarientExtents,
-  std::size_t... CovariantExtents>
-class zero<
-  T,
-  valence<
-    detail::extent<ContravarientExtents...>,
-    detail::extent<CovariantExtents...>
-  >
-> {
-};
+  function   f;
+  derivative dfdx;
 
+  static_assert(std::is_same<
+    derivative::result_type::valence_type,
+    make_valence<>::contravariant<2>::covariant<2>::type
+  >::value, "Test failed");
 }
-
-#include <adx/operators/zero_operators.hpp>
-
-#endif /* end of include guard: ADX_ZERO_HPP_ */

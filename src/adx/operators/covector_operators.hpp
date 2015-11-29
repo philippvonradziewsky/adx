@@ -48,36 +48,6 @@ T operator* (covector<T,Extent> lhs, vector<T,Extent> rhs) {
 }
 
 template<typename T, std::size_t Extent>
-zero<T,typename make_valence<>::template covariant<Extent>::type>
-operator* (
-  zero<
-    T,
-    typename make_valence<
-    >::template contravariant<
-      Extent
-    >:: template covariant<
-      Extent
-    >::type
-  >,
-  vector<T,Extent>) {
-  return zero<T,typename make_valence<>::template covariant<Extent>::type>();
-}
-
-template<typename T, std::size_t Extent>
-covector<T,Extent>
-operator+ (
-  zero<
-    T,
-    typename make_valence<
-    >::template covariant<
-      Extent
-    >::type
-  >,
-  covector<T,Extent> rhs) {
-  return rhs;
-}
-
-template<typename T, std::size_t Extent>
 covector<T,Extent>
 operator* (
   covector<T,Extent> lhs,

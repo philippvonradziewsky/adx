@@ -59,7 +59,10 @@ if(adx_BUILD_TESTING OR CodeCov_BUILD_COVERAGE)
 
   add_unit_test(scalar_test_01)
   add_unit_test(scalar_test_02)
+  add_unit_test(scalar_test_03)
+  add_unit_test(scalar_test_04)
   add_unit_test(vector_test_01)
+  add_unit_test(vector_test_02)
   add_unit_test(tensor_test_01)
 
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/unit_tests.c.in"
