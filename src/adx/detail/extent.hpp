@@ -18,7 +18,10 @@
 #ifndef ADX_EXTENT_HPP_
 #define ADX_EXTENT_HPP_
 
+#include <adx/detail/always_false.hpp>
+
 #include <array>
+#include <type_traits>
 
 namespace adx {
 namespace detail {
@@ -40,6 +43,48 @@ struct extent {
     return (index == dimension) ?
       result : size(index+1,result*at(index));
   }
+};
+
+template<class ExtentLhs, class ExtentRhs>
+struct concat_extent;
+
+template<class ExtentLhs, class ExtentRhs>
+using concat_extent_t = typename concat_extent<ExtentLhs,ExtentRhs>::type;
+
+template<std::size_t... Lhs, std::size_t... Rhs>
+struct concat_extent<extent<Lhs...>, extent<Rhs...>> {
+  using type = extent<Lhs..., Rhs...>;
+};
+
+template<class Extent>
+struct pop_extent {
+  static_assert(!std::is_same<Extent, extent<>>::value,
+                "cannot remove extent, already empty");
+  static_assert(detail::always_false<Extent>::value,
+                "not an extent type");
+};
+
+template<class Extent>
+using pop_extent_t = typename pop_extent<Extent>::type;
+
+template<std::size_t LastExtent>
+struct pop_extent<extent<LastExtent>> {
+  using type = extent<>;
+};
+
+template<std::size_t FirstExtent,std::size_t... TrailingExtents>
+struct pop_extent<
+  extent<
+    FirstExtent,
+    TrailingExtents...
+  >
+> {
+  using type = concat_extent_t<
+                 extent<FirstExtent>,
+                 pop_extent_t<
+                   extent<TrailingExtents...>
+                 >
+               >;
 };
 
 }
