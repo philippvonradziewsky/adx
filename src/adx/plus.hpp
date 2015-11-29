@@ -63,7 +63,14 @@ struct common_type<plus<Lhs,Rhs>,U>
 
 template<typename Lhs, typename Rhs, typename Var>
 struct derivative<plus<Lhs,Rhs>, Var> {
-  using result_type = typename plus<Lhs,Rhs>::result_type;
+  using result_type = decltype(
+                        std::declval<
+                          typename derivative<Lhs,Var>::result_type
+                        >() +
+                        std::declval<
+                          typename derivative<Rhs,Var>::result_type
+                        >()
+                      );
 
   template<class... Args>
   result_type operator() (Args const&... args) {
